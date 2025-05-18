@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>แบบฟอร์มบริการลูกค้า</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background: #f9f9f9;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #responseMessage {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📋 แบบฟอร์มขอรับบริการ</h2>
+  <form id="serviceForm">
+    <label>ชื่อบริษัท:
+      <input type="text" name="company" required>
+    </label>
+
+    <label>ชื่อผู้ติดต่อ:
+      <input type="text" name="contact">
+    </label>
+
+    <label>เบอร์โทรศัพท์:
+      <input type="text" name="phone">
+    </label>
+
+    <label>ประเภทงาน:
+      <input type="text" name="jobType">
+    </label>
+
+    <label>ลิงก์แผนที่ (Google Maps):
+      <input type="url" name="mapLink">
+    </label>
+
+    <label>รายละเอียดงาน:
+      <textarea name="details" rows="4"></textarea>
+    </label>
+
+    <button type="submit">📨 ส่งข้อมูล</button>
+    <button type="button" onclick="openMap()">📍 เปิด Google Maps</button>
+  </form>
+
+  <p id="responseMessage"></p>
+
+  <script>
+    function openMap() {
+      const mapLink = document.querySelector('input[name="mapLink"]').value;
+      if (mapLink) {
+        window.open(mapLink, "_blank");
+      } else {
+        alert("กรุณากรอกลิงก์แผนที่ก่อน");
+      }
+    }
+
+    document.getElementById("serviceForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = new URLSearchParams(new FormData(form));
+
+      fetch("https://script.google.com/macros/s/AKfycbyU6QSnKorsYtdxNBcGDTSzqo64opHYltF50-VXxkjl585pdIaklgIBs2R6xdX6Gmy9/exec", {
+        method: "POST",
+        body: data
+      })
+        .then((res) => res.text())
+        .then((msg) => {
+          document.getElementById("responseMessage").innerText = msg;
+          form.reset();
+        })
+        .catch((err) => {
+          console.error(err);
+          document.getElementById("responseMessage").innerText = "❌ มีข้อผิดพลาด กรุณาลองใหม่";
+        });
+    });
+  </script>
+
+</body>
+</html>
